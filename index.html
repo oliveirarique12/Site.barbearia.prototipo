@@ -3,7 +3,6 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <title>Barbearia Premium</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
@@ -22,13 +21,10 @@ body {
   min-height: 100vh;
 }
 
-/* TOPO */
 .header {
   background: #111;
   color: #fff;
   padding: 20px;
-  border-bottom-left-radius: 20px;
-  border-bottom-right-radius: 20px;
 }
 
 .header h1 {
@@ -36,63 +32,47 @@ body {
   color: #f1c40f;
 }
 
-.status {
-  font-size: 14px;
+.section {
+  padding: 15px;
+}
+
+.tag, .hora, .dia {
+  padding: 10px 15px;
+  border-radius: 20px;
+  cursor: pointer;
+  margin: 5px;
+  display: inline-block;
+  background: #eee;
+}
+
+.tag.active, .dia.active, .hora.active {
+  background: #f1c40f;
   font-weight: bold;
 }
 
-/* BOTÕES MENU */
-.menu {
-  padding: 15px;
+.hora.ocupado {
+  background: #ccc;
+  text-decoration: line-through;
+  cursor: not-allowed;
 }
 
 .btn {
   display: block;
+  margin-top: 15px;
   padding: 15px;
-  margin-bottom: 10px;
-  border-radius: 12px;
-  text-align: center;
-  text-decoration: none;
-  font-weight: bold;
   background: #f1c40f;
+  text-align: center;
+  border-radius: 10px;
+  text-decoration: none;
   color: #000;
-  cursor: pointer;
-}
-
-/* SEÇÕES (ESCONDIDAS) */
-.section {
-  display: none;
-  padding: 15px;
-  animation: fade 0.3s ease;
-}
-
-@keyframes fade {
-  from {opacity: 0; transform: translateY(10px);}
-  to {opacity: 1; transform: translateY(0);}
-}
-
-/* CARD */
-.card {
-  background: #fff;
-  padding: 15px;
-  border-radius: 15px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-}
-
-.service {
-  display: flex;
-  justify-content: space-between;
-  margin: 8px 0;
-}
-
-.price {
   font-weight: bold;
 }
 
-iframe {
-  width: 100%;
+.box {
+  margin-top: 15px;
+  padding: 10px;
+  background: #eee;
   border-radius: 10px;
-  margin-top: 10px;
 }
 </style>
 </head>
@@ -101,127 +81,118 @@ iframe {
 
 <div class="container">
 
-  <!-- TOPO -->
-  <div class="header">
-    <h1>💈 Barbearia Premium</h1>
-    <div id="status" class="status"></div>
-  </div>
+<div class="header">
+  <h1>💈 Barbearia Premium</h1>
+</div>
 
-  <!-- MENU -->
-  <div class="menu">
+<div class="section">
 
-    <div class="btn" onclick="abrir('servicos')">✂️ Serviços</div>
+<h3>✂️ Escolha o serviço</h3>
 
-    <div class="btn" onclick="abrir('planos')">💳 Planos</div>
+<div>
+  <span class="tag" onclick="selecionarServico(this,'Corte')">Corte R$40</span>
+  <span class="tag" onclick="selecionarServico(this,'Barba')">Barba R$30</span>
+  <span class="tag" onclick="selecionarServico(this,'Corte + Barba')">Corte + Barba R$70</span>
+</div>
 
-    <a class="btn" href="https://wa.me/5511999999999?text=Quero%20agendar%20um%20corte">
-      📅 Agendar agora
-    </a>
+<h3>📅 Escolha o dia</h3>
 
-    <div class="btn" onclick="abrir('localizacao')">📍 Localização</div>
+<div>
+  <span class="dia" onclick="selecionarDia(this,'Segunda')">Seg</span>
+  <span class="dia" onclick="selecionarDia(this,'Terça')">Ter</span>
+  <span class="dia" onclick="selecionarDia(this,'Quarta')">Qua</span>
+  <span class="dia" onclick="selecionarDia(this,'Quinta')">Qui</span>
+  <span class="dia" onclick="selecionarDia(this,'Sexta')">Sex</span>
+  <span class="dia" onclick="selecionarDia(this,'Sábado')">Sáb</span>
+</div>
 
-  </div>
+<h3>⏰ Escolha o horário</h3>
 
-  <!-- SERVIÇOS -->
-  <div id="servicos" class="section">
-    <div class="card">
-      <h2>✂️ Serviços</h2>
+<div id="horarios"></div>
 
-      <div class="service">
-        <span>Corte</span>
-        <span class="price">R$40</span>
-      </div>
+<div class="box" id="resumo">Selecione serviço, dia e horário</div>
 
-      <div class="service">
-        <span>Barba</span>
-        <span class="price">R$30</span>
-      </div>
-
-      <div class="service">
-        <span>Corte + Barba</span>
-        <span class="price">R$70</span>
-      </div>
-
-    </div>
-  </div>
-
-  <!-- PLANOS -->
-  <div id="planos" class="section">
-    <div class="card">
-      <h2>💳 Planos</h2>
-
-      <div class="service">
-        <span>Corte mensal</span>
-        <span class="price">R$80</span>
-      </div>
-
-      <div class="service">
-        <span>Corte + barba</span>
-        <span class="price">R$120</span>
-      </div>
-
-    </div>
-  </div>
-
-  <!-- LOCALIZAÇÃO -->
-  <div id="localizacao" class="section">
-    <div class="card">
-      <h2>📍 Localização</h2>
-
-      <a class="btn" href="https://maps.app.goo.gl/GGKwxuU137peXvCf8" target="_blank">
-        🚗 Como chegar
-      </a>
-
-      <iframe
-        src="https://www.google.com/maps?q=-23.5505,-46.6333&output=embed"
-        height="200">
-      </iframe>
-
-    </div>
-  </div>
+<a id="btn" class="btn" href="#">📅 Confirmar no WhatsApp</a>
 
 </div>
 
-<!-- SCRIPT -->
+</div>
+
 <script>
-// abrir seção estilo app
-function abrir(secao) {
-  document.querySelectorAll('.section').forEach(s => {
-    s.style.display = 'none';
+let servico = "";
+let dia = "";
+let hora = "";
+
+// horários padrão
+const listaHorarios = [
+"09:00","09:30","10:00","10:30","11:00","11:30",
+"13:00","13:30","14:00","14:30","15:00","15:30",
+"16:00","16:30","17:00","17:30","18:00"
+];
+
+// horários ocupados (simulação)
+let ocupados = JSON.parse(localStorage.getItem("ocupados")) || {};
+
+// selecionar serviço
+function selecionarServico(el, nome){
+  document.querySelectorAll('.tag').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  servico = nome;
+  atualizar();
+}
+
+// selecionar dia
+function selecionarDia(el, nome){
+  document.querySelectorAll('.dia').forEach(d=>d.classList.remove('active'));
+  el.classList.add('active');
+  dia = nome;
+  gerarHorarios();
+  atualizar();
+}
+
+// gerar horários
+function gerarHorarios(){
+  const container = document.getElementById("horarios");
+  container.innerHTML = "";
+
+  listaHorarios.forEach(h => {
+    const span = document.createElement("span");
+    span.className = "hora";
+    span.innerText = h;
+
+    if(ocupados[dia]?.includes(h)){
+      span.classList.add("ocupado");
+    } else {
+      span.onclick = () => selecionarHora(span, h);
+    }
+
+    container.appendChild(span);
   });
-
-  document.getElementById(secao).style.display = 'block';
-
-  window.scrollTo({ top: 300, behavior: 'smooth' });
 }
 
-// status aberto/fechado
-function verificarHorario() {
-  const agora = new Date();
-  const dia = agora.getDay();
-  const hora = agora.getHours() + agora.getMinutes() / 60;
+// selecionar hora
+function selecionarHora(el, h){
+  document.querySelectorAll('.hora').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  hora = h;
+  atualizar();
+}
 
-  let aberto = false;
+// atualizar resumo
+function atualizar(){
+  const box = document.getElementById("resumo");
+  const btn = document.getElementById("btn");
 
-  if (dia >= 1 && dia <= 5) {
-    aberto = hora >= 9 && hora < 19;
-  } else if (dia === 6) {
-    aberto = hora >= 9 && hora < 16;
-  }
+  if(servico && dia && hora){
+    box.innerHTML = `${servico} - ${dia} às ${hora}`;
 
-  const status = document.getElementById("status");
+    const msg = `Agendamento:%0A${servico}%0A${dia} às ${hora}`;
+    btn.href = `https://wa.me/5511999999999?text=${msg}`;
 
-  if (aberto) {
-    status.innerHTML = "🟢 Aberto agora";
-    status.style.color = "#2ecc71";
   } else {
-    status.innerHTML = "🔴 Fechado agora";
-    status.style.color = "#e74c3c";
+    box.innerHTML = "Selecione serviço, dia e horário";
   }
 }
-
-verificarHorario();
-setInterval(verificarHorario, 60000);
 </script>
 
 </body>
