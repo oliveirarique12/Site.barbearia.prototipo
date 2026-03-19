@@ -8,18 +8,24 @@
 
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
 
+<meta name="theme-color" content="#f1c40f">
+
 <style>
+
+/* BASE */
 body {
   margin: 0;
   font-family: 'Poppins', sans-serif;
-  background: #f2f2f2;
+  background: #eaeaea;
 }
 
+/* CONTAINER */
 .container {
   max-width: 500px;
   margin: auto;
   background: #fff;
   min-height: 100vh;
+  box-shadow: 0 0 20px rgba(0,0,0,0.1);
 }
 
 /* HEADER */
@@ -51,8 +57,8 @@ body {
 /* SERVIÇOS */
 .servicos {
   display: flex;
-  overflow-x: auto;
   gap: 10px;
+  overflow-x: auto;
 }
 
 .servico {
@@ -70,7 +76,7 @@ body {
   color: #f1c40f;
 }
 
-/* SELECIONADO */
+/* RESUMO */
 .resumo {
   background: #eee;
   padding: 12px;
@@ -82,8 +88,8 @@ body {
 /* DIAS */
 .dias {
   display: flex;
-  overflow-x: auto;
   gap: 10px;
+  overflow-x: auto;
 }
 
 .dia {
@@ -136,6 +142,31 @@ body {
   color: #000;
   font-weight: bold;
 }
+
+/* DESKTOP */
+@media (min-width: 900px) {
+
+  body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+  }
+
+  .container {
+    max-width: 900px;
+    border-radius: 20px;
+    overflow: hidden;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .header {
+    grid-column: 1 / 3;
+  }
+
+}
+
 </style>
 </head>
 
@@ -146,7 +177,7 @@ body {
 <!-- TOPO -->
 <div class="header">
   <img src="https://cdn-icons-png.flaticon.com/512/921/921347.png">
-  <h1>Barbearia</h1>
+  <h1>Barbearia Premium</h1>
 </div>
 
 <!-- SERVIÇOS -->
@@ -166,15 +197,15 @@ body {
 
 <!-- DIA -->
 <div class="card">
-  <h3>📅 Qual dia deseja?</h3>
+  <h3>📅 Escolha o dia</h3>
 
   <div class="dias">
-    <div class="dia" onclick="selectDia(this,'Seg')">Seg</div>
-    <div class="dia" onclick="selectDia(this,'Ter')">Ter</div>
-    <div class="dia" onclick="selectDia(this,'Qua')">Qua</div>
-    <div class="dia" onclick="selectDia(this,'Qui')">Qui</div>
-    <div class="dia" onclick="selectDia(this,'Sex')">Sex</div>
-    <div class="dia" onclick="selectDia(this,'Sáb')">Sáb</div>
+    <div class="dia" onclick="selectDia(this,'Segunda')">Seg</div>
+    <div class="dia" onclick="selectDia(this,'Terça')">Ter</div>
+    <div class="dia" onclick="selectDia(this,'Quarta')">Qua</div>
+    <div class="dia" onclick="selectDia(this,'Quinta')">Qui</div>
+    <div class="dia" onclick="selectDia(this,'Sexta')">Sex</div>
+    <div class="dia" onclick="selectDia(this,'Sábado')">Sáb</div>
   </div>
 </div>
 
@@ -190,6 +221,7 @@ body {
 </div>
 
 <script>
+
 let servico="", dia="", hora="";
 
 const horariosBase = [
@@ -198,9 +230,10 @@ const horariosBase = [
 "16:00","16:30","17:00","17:30","18:00"
 ];
 
+// horários ocupados (exemplo)
 let ocupados = {
-  "Seg": ["10:00","14:00"],
-  "Sex": ["09:30","15:00"]
+  "Segunda": ["10:00","14:00"],
+  "Sexta": ["09:30","15:00"]
 };
 
 function selectServico(el, nome){
@@ -255,96 +288,7 @@ function atualizar(){
     btn.href = `https://wa.me/5511999999999?text=${encodeURIComponent(msg)}`;
   }
 }
-</script>
 
-</body>
-</html><h3>⏰ Escolha o horário</h3>
-
-<div id="horarios"></div>
-
-<div class="box" id="resumo">Selecione serviço, dia e horário</div>
-
-<a id="btn" class="btn" href="#">📅 Confirmar no WhatsApp</a>
-
-</div>
-
-</div>
-
-<script>
-let servico = "";
-let dia = "";
-let hora = "";
-
-// horários padrão
-const listaHorarios = [
-"09:00","09:30","10:00","10:30","11:00","11:30",
-"13:00","13:30","14:00","14:30","15:00","15:30",
-"16:00","16:30","17:00","17:30","18:00"
-];
-
-// horários ocupados (simulação)
-let ocupados = JSON.parse(localStorage.getItem("ocupados")) || {};
-
-// selecionar serviço
-function selecionarServico(el, nome){
-  document.querySelectorAll('.tag').forEach(t=>t.classList.remove('active'));
-  el.classList.add('active');
-  servico = nome;
-  atualizar();
-}
-
-// selecionar dia
-function selecionarDia(el, nome){
-  document.querySelectorAll('.dia').forEach(d=>d.classList.remove('active'));
-  el.classList.add('active');
-  dia = nome;
-  gerarHorarios();
-  atualizar();
-}
-
-// gerar horários
-function gerarHorarios(){
-  const container = document.getElementById("horarios");
-  container.innerHTML = "";
-
-  listaHorarios.forEach(h => {
-    const span = document.createElement("span");
-    span.className = "hora";
-    span.innerText = h;
-
-    if(ocupados[dia]?.includes(h)){
-      span.classList.add("ocupado");
-    } else {
-      span.onclick = () => selecionarHora(span, h);
-    }
-
-    container.appendChild(span);
-  });
-}
-
-// selecionar hora
-function selecionarHora(el, h){
-  document.querySelectorAll('.hora').forEach(t=>t.classList.remove('active'));
-  el.classList.add('active');
-  hora = h;
-  atualizar();
-}
-
-// atualizar resumo
-function atualizar(){
-  const box = document.getElementById("resumo");
-  const btn = document.getElementById("btn");
-
-  if(servico && dia && hora){
-    box.innerHTML = `${servico} - ${dia} às ${hora}`;
-
-    const msg = `Agendamento:%0A${servico}%0A${dia} às ${hora}`;
-    btn.href = `https://wa.me/5511999999999?text=${msg}`;
-
-  } else {
-    box.innerHTML = "Selecione serviço, dia e horário";
-  }
-}
 </script>
 
 </body>
