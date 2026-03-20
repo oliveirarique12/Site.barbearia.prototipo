@@ -4,11 +4,11 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Barbearia Premium</title>
+<title>Mario Barba</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
 
-<meta name="theme-color" content="#f1c40f">
+<meta name="theme-color" content="#3e2723">
 
 <style>
 
@@ -25,24 +25,25 @@ body {
   margin: auto;
   background: #fff;
   min-height: 100vh;
-  box-shadow: 0 0 20px rgba(0,0,0,0.1);
+  box-shadow: 0 0 20px rgba(0,0,0,0.2);
 }
 
 /* HEADER */
 .header {
-  background: linear-gradient(180deg,#f1c40f,#fff);
+  background: linear-gradient(180deg,#000,#3e2723);
+  color: #fff;
   text-align: center;
-  padding: 20px;
+  padding: 25px;
 }
 
 .header img {
   width: 70px;
-  height: 70px;
   border-radius: 50%;
 }
 
 .header h1 {
-  margin: 10px 0 0;
+  margin-top: 10px;
+  font-size: 22px;
 }
 
 /* CARD */
@@ -62,7 +63,8 @@ body {
 }
 
 .servico {
-  background: #f1c40f;
+  background: #3e2723;
+  color: #fff;
   padding: 12px;
   border-radius: 15px;
   min-width: 120px;
@@ -73,12 +75,11 @@ body {
 
 .servico.active {
   background: #000;
-  color: #f1c40f;
 }
 
 /* RESUMO */
 .resumo {
-  background: #eee;
+  background: #f5f5f5;
   padding: 12px;
   border-radius: 10px;
   text-align: center;
@@ -93,7 +94,8 @@ body {
 }
 
 .dia {
-  background: #f1c40f;
+  background: #3e2723;
+  color: #fff;
   padding: 10px;
   border-radius: 10px;
   min-width: 60px;
@@ -103,7 +105,6 @@ body {
 
 .dia.active {
   background: #000;
-  color: #f1c40f;
 }
 
 /* HORÁRIOS */
@@ -121,7 +122,8 @@ body {
 }
 
 .hora.active {
-  background: #f1c40f;
+  background: #3e2723;
+  color: #fff;
 }
 
 .hora.ocupado {
@@ -135,11 +137,11 @@ body {
   display: block;
   margin-top: 15px;
   padding: 15px;
-  background: #f1c40f;
+  background: #000;
+  color: #fff;
   text-align: center;
   border-radius: 12px;
   text-decoration: none;
-  color: #000;
   font-weight: bold;
 }
 
@@ -177,7 +179,7 @@ body {
 <!-- TOPO -->
 <div class="header">
   <img src="https://cdn-icons-png.flaticon.com/512/921/921347.png">
-  <h1>Barbearia Premium</h1>
+  <h1>💈 Mario Barba</h1>
 </div>
 
 <!-- SERVIÇOS -->
@@ -230,7 +232,6 @@ const horariosBase = [
 "16:00","16:30","17:00","17:30","18:00"
 ];
 
-// horários ocupados (exemplo)
 let ocupados = {
   "Segunda": ["10:00","14:00"],
   "Sexta": ["09:30","15:00"]
