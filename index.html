@@ -76,6 +76,12 @@ body {
   color: #fff;
 }
 
+.hora.ocupado {
+  background: #ccc;
+  color: #777;
+  cursor: not-allowed;
+}
+
 .resumo {
   background: #f5f5f5;
   padding: 10px;
@@ -94,6 +100,7 @@ body {
   border-radius: 12px;
   text-decoration: none;
   font-weight: bold;
+  cursor: pointer;
 }
 
 /* PLANO */
@@ -152,7 +159,7 @@ body {
   <h1>💈 Mario Barba</h1>
 </div>
 
-<!-- 💳 PLANO PRIMEIRO -->
+<!-- 💳 PLANO -->
 <div class="card">
   <h3>💳 Plano Mensal</h3>
 
@@ -162,14 +169,14 @@ body {
     <p><strong>🔥 Ideal para quem quer estar sempre alinhado</strong></p>
 
     <ul>
-      <li>✔️ Corte ilimitado durante o mês</li>
-      <li>✔️ Corte quantas vezes quiser</li>
+      <li>✔️ Corte quantas vezes quiser no mês</li>
+      <li>✔️ Liberdade total de agendamento</li>
       <li>✔️ Economia garantida</li>
     </ul>
 
     <h2 style="text-align:center;">R$80/mês</h2>
 
-    <a href="https://wa.me/5511999999999?text=Quero%20assinar%20o%20plano%20mensal"
+    <a href="https://wa.me/5511999999999?text=Quero%20assinar%20o%20plano"
        class="plano-btn">
        💬 Assinar plano
     </a>
@@ -209,14 +216,32 @@ body {
 
   <div id="horarios" class="horarios"></div>
 
-  <a id="btn" class="btn" href="#">📲 Solicitar agendamento</a>
+  <a id="btn" class="btn">📲 Solicitar agendamento</a>
 </div>
 
 </div>
 
-<script>
+<!-- 🔥 FIREBASE -->
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-app.js";
+import { getFirestore, collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyAxApXN7L9FvLL2Sk-U6s-rdyB0u5zH6tI",
+  authDomain: "mario-barba.firebaseapp.com",
+  projectId: "mario-barba",
+  storageBucket: "mario-barba.firebasestorage.app",
+  messagingSenderId: "602729436621",
+  appId: "1:602729436621:web:410dcba2e1ccc7c0142084",
+  measurementId: "G-WGQ17LBDJN"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
 
 let servico="", preco="", dia="", hora="";
+let ocupados = {};
 
 const horariosBase = [
 "09:00","09:30","10:00","10:30","11:00","11:30",
@@ -224,64 +249,75 @@ const horariosBase = [
 "16:00","16:30","17:00","17:30","18:00"
 ];
 
-function selectServico(el, nome, valor){
+async function carregar(){
+  ocupados = {};
+  const querySnapshot = await getDocs(collection(db, "agendamentos"));
+
+  querySnapshot.forEach((doc) => {
+    const data = doc.data();
+    if(!ocupados[data.dia]) ocupados[data.dia]=[];
+    ocupados[data.dia].push(data.hora);
+  });
+}
+
+window.selectServico = (el,nome,valor)=>{
   document.querySelectorAll('.servico').forEach(e=>e.classList.remove('active'));
   el.classList.add('active');
-
   servico = nome;
   preco = valor;
-
   document.getElementById("resumo").innerHTML = `${nome} - R$${valor}`;
-  atualizar();
-}
+};
 
-function selectDia(el, nome){
+window.selectDia = async (el,nome)=>{
   document.querySelectorAll('.dia').forEach(e=>e.classList.remove('active'));
   el.classList.add('active');
-
   dia = nome;
+  await carregar();
   gerarHorarios();
-  atualizar();
-}
+};
 
 function gerarHorarios(){
   const div = document.getElementById("horarios");
   div.innerHTML="";
-
   horariosBase.forEach(h=>{
     let span = document.createElement("div");
     span.className="hora";
     span.innerText=h;
-    span.onclick=()=>selectHora(span,h);
+
+    if(ocupados[dia]?.includes(h)){
+      span.classList.add("ocupado");
+    } else {
+      span.onclick=()=>selectHora(span,h);
+    }
+
     div.appendChild(span);
   });
 }
 
-function selectHora(el, h){
+function selectHora(el,h){
   document.querySelectorAll('.hora').forEach(e=>e.classList.remove('active'));
   el.classList.add('active');
-
   hora=h;
-  atualizar();
 }
 
-function atualizar(){
-  const btn = document.getElementById("btn");
-
-  if(servico && dia && hora){
-    const mensagem =
-`Olá! Gostaria de solicitar um agendamento:
-
-💈 Serviço: ${servico}
-💰 Valor: R$${preco}
-📅 Dia: ${dia}
-⏰ Horário: ${hora}
-
-Aguardo confirmação 👍`;
-
-    btn.href = `https://wa.me/5511999999999?text=${encodeURIComponent(mensagem)}`;
+document.getElementById("btn").onclick = async ()=>{
+  if(!servico || !dia || !hora){
+    alert("Selecione tudo!");
+    return;
   }
-}
+
+  await addDoc(collection(db, "agendamentos"), {
+    servico,
+    dia,
+    hora
+  });
+
+  const mensagem = `Olá! Quero agendar:\n\n💈 Serviço: ${servico}\n📅 Dia: ${dia}\n⏰ Hora: ${hora}`;
+  window.open(`https://wa.me/5511999999999?text=${encodeURIComponent(mensagem)}`);
+
+  alert("Agendamento enviado!");
+  location.reload();
+};
 
 </script>
 
