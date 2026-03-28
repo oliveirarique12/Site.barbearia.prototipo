@@ -40,6 +40,29 @@ button {
 
 <div id="lista"></div>
 
+<!-- 🔐 PROTEÇÃO COM SENHA -->
+<script>
+const senhaCorreta = "mariobarba2026";
+let acesso = false;
+
+for(let i=0; i<3; i++){
+  let tentativa = prompt("Digite a senha:");
+
+  if(tentativa === senhaCorreta){
+    acesso = true;
+    break;
+  } else {
+    alert("Senha incorreta!");
+  }
+}
+
+if(!acesso){
+  alert("Acesso bloqueado!");
+  window.location.href = "/";
+}
+</script>
+
+<!-- 🔥 FIREBASE -->
 <script type="module">
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-app.js";
