@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<title>Painel Mario Barba</title>
+
+<style>
+body {
+  font-family: Arial;
+  background: #111;
+  color: #fff;
+  padding: 20px;
+}
+
+h1 {
+  text-align: center;
+}
+
+.card {
+  background: #222;
+  padding: 15px;
+  border-radius: 10px;
+  margin: 10px 0;
+}
+
+button {
+  background: red;
+  color: #fff;
+  border: none;
+  padding: 8px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+</style>
+</head>
+
+<body>
+
+<h1>📅 Agenda - Mario Barba</h1>
+
+<div id="lista"></div>
+
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-app.js";
+import { getFirestore, collection, getDocs, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyAxApXN7L9FvLL2Sk-U6s-rdyB0u5zH6tI",
+  authDomain: "mario-barba.firebaseapp.com",
+  projectId: "mario-barba",
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+async function carregar(){
+  const div = document.getElementById("lista");
+  div.innerHTML = "";
+
+  const querySnapshot = await getDocs(collection(db, "agendamentos"));
+
+  querySnapshot.forEach((d) => {
+    const data = d.data();
+
+    const card = document.createElement("div");
+    card.className="card";
+
+    card.innerHTML = `
+      <p><strong>💈 ${data.servico}</strong></p>
+      <p>📅 ${data.dia}</p>
+      <p>⏰ ${data.hora}</p>
+      <button onclick="remover('${d.id}')">Cancelar</button>
+    `;
+
+    div.appendChild(card);
+  });
+}
+
+window.remover = async (id)=>{
+  await deleteDoc(doc(db,"agendamentos",id));
+  carregar();
+};
+
+carregar();
+
+</script>
+
+</body>
+</html>
