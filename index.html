@@ -52,7 +52,6 @@ body {
   min-width: 150px;
   text-align: center;
   cursor: pointer;
-  font-size: 14px;
 }
 
 .servico.active, .dia.active {
@@ -97,14 +96,6 @@ body {
   font-weight: bold;
 }
 
-/* PLANO */
-.plano-box {
-  background: linear-gradient(135deg,#3e2723,#000);
-  color: #fff;
-  border-radius: 15px;
-  padding: 20px;
-}
-
 /* PRODUTOS */
 .produto {
   background: #111;
@@ -126,30 +117,12 @@ body {
 <div class="container">
 
 <div class="header">
-  <h1>💈 Mario Barba 💈</h1>
-</div>
-
-<!-- PLANO -->
-<div class="card">
-  <h3>💳 Plano Mensal</h3>
-
-  <div class="plano-box">
-    <h2>Plano VIP</h2>
-    <p><strong>🔥 Esteja sempre alinhado sem se preocupar!</strong></p>
-
-    <ul>
-      <li>✔️ Corte ilimitado durante o mês</li>
-      <li>✔️ Corte quantas vezes quiser</li>
-      <li>✔️ Economia garantida</li>
-    </ul>
-
-    <h2 style="text-align:center;">R$80/mês</h2>
-  </div>
+  <h1>💈 Mario Barba</h1>
 </div>
 
 <!-- SERVIÇOS -->
 <div class="card">
-  <h3>✂️ Escolha o serviço</h3>
+  <h3>✂️ Serviços</h3>
 
   <div class="servicos">
     <div class="servico" onclick="selectServico(this,'Corte','40')">Corte<br>R$40</div>
@@ -164,9 +137,37 @@ body {
   <div id="resumo" class="resumo">Selecione um serviço</div>
 </div>
 
-<!-- DIA -->
+<!-- PRODUTOS -->
 <div class="card">
-  <h3>📅 Escolha o dia</h3>
+  <h3>🧴 Produtos</h3>
+
+  <!-- BALM -->
+  <div class="produto">
+    <img src="SUA_IMAGEM_BALM_AQUI">
+    <h3>Balm para Barba</h3>
+    <p>
+    🔥 Hidrata, amacia, modela, alinha e perfuma sua barba.<br><br>
+    Resultado: barba macia, alinhada e com aparência profissional.
+    </p>
+    <strong>R$70</strong>
+  </div>
+
+  <!-- SHAMPOO -->
+  <div class="produto">
+    <img src="SUA_IMAGEM_SHAMPOO_AQUI">
+    <h3>Shampoo + Condicionador</h3>
+    <p>
+    💧 Limpa profundamente os fios e cuida da pele da barba.<br><br>
+    Resultado: barba limpa, hidratada e saudável todos os dias.
+    </p>
+    <strong>R$45</strong>
+  </div>
+
+</div>
+
+<!-- DIAS -->
+<div class="card">
+  <h3>📅 Dia</h3>
 
   <div class="dias">
     <div class="dia" onclick="selectDia(this,'Domingo')">Dom</div>
@@ -181,11 +182,11 @@ body {
 
 <!-- HORÁRIOS -->
 <div class="card">
-  <h3>⏰ Escolha um horário</h3>
+  <h3>⏰ Horários</h3>
 
   <div id="horarios" class="horarios"></div>
 
-  <a id="btn" class="btn" href="#">📲 Solicitar agendamento</a>
+  <a id="btn" class="btn" href="#">📲 Agendar via WhatsApp</a>
 </div>
 
 </div>
@@ -194,11 +195,14 @@ body {
 
 let servico="", preco="", dia="", hora="";
 
-// 🔥 AGORA 09:00 ATÉ 20:00
+// 🔥 HORÁRIOS DE 30 EM 30 MIN
 const horariosBase = [
-"09:00","10:00","11:00","12:00",
-"13:00","14:00","15:00","16:00",
-"17:00","18:00","19:00","20:00"
+"09:00","09:30","10:00","10:30",
+"11:00","11:30","12:00","12:30",
+"13:00","13:30","14:00","14:30",
+"15:00","15:30","16:00","16:30",
+"17:00","17:30","18:00","18:30",
+"19:00","19:30","20:00"
 ];
 
 function selectServico(el, nome, valor){
