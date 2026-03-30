@@ -19,6 +19,8 @@ body {
   max-width: 500px;
   margin: auto;
   background: #fff;
+  min-height: 100vh;
+  box-shadow: 0 0 20px rgba(0,0,0,0.2);
 }
 
 .header {
@@ -50,6 +52,7 @@ body {
   min-width: 150px;
   text-align: center;
   cursor: pointer;
+  font-size: 14px;
 }
 
 .servico.active, .dia.active {
@@ -110,6 +113,19 @@ body {
   padding: 15px;
   margin-top: 10px;
 }
+
+.produto img {
+  width: 100%;
+  border-radius: 10px;
+}
+
+.produto h3 {
+  margin: 10px 0 5px;
+}
+
+.produto p {
+  font-size: 14px;
+}
 </style>
 </head>
 
@@ -121,13 +137,13 @@ body {
   <h1>💈 Mario Barba</h1>
 </div>
 
-<!-- 💳 PLANO -->
+<!-- PLANO -->
 <div class="card">
-  <h3>Plano Mensal</h3>
+  <h3>💳 Plano Mensal</h3>
 
   <div class="plano-box">
     <h2>Plano VIP</h2>
-    <p><strong>🔥 Esteja sempre alinhado</strong></p>
+    <p><strong>🔥 Esteja sempre alinhado sem se preocupar!</strong></p>
 
     <ul>
       <li>✔️ Corte ilimitado durante o mês</li>
@@ -136,12 +152,17 @@ body {
     </ul>
 
     <h2 style="text-align:center;">R$80/mês</h2>
+
+    <a href="https://wa.me/5511999999999?text=Quero%20assinar%20o%20plano%20mensal"
+       class="btn">
+       💬 Assinar plano
+    </a>
   </div>
 </div>
 
-<!-- ✂️ SERVIÇOS -->
+<!-- SERVIÇOS -->
 <div class="card">
-  <h3>Serviços</h3>
+  <h3>✂️ Escolha o serviço</h3>
 
   <div class="servicos">
     <div class="servico" onclick="selectServico(this,'Corte','40')">Corte<br>R$40</div>
@@ -156,9 +177,29 @@ body {
   <div id="resumo" class="resumo">Selecione um serviço</div>
 </div>
 
-<!-- 📅 DIA -->
+<!-- PRODUTOS -->
 <div class="card">
-  <h3>Escolha o dia</h3>
+  <h3>🧴 Produtos</h3>
+
+  <div class="produto">
+    <img src="https://i.imgur.com/3ZQ3ZQy.png">
+    <h3>Balm para Barba</h3>
+    <p>🔥 Hidrata, amacia e deixa sua barba alinhada e perfumada o dia inteiro.</p>
+    <strong>R$70</strong>
+  </div>
+
+  <div class="produto">
+    <img src="https://i.imgur.com/9Xn4Q8L.png">
+    <h3>Kit Shampoo + Condicionador</h3>
+    <p>💧 Limpeza profunda e cuidado completo para sua barba.</p>
+    <strong>R$45</strong>
+  </div>
+
+</div>
+
+<!-- DIA -->
+<div class="card">
+  <h3>📅 Escolha o dia</h3>
 
   <div class="dias">
     <div class="dia" onclick="selectDia(this,'Domingo')">Dom</div>
@@ -171,31 +212,13 @@ body {
   </div>
 </div>
 
-<!-- ⏰ HORÁRIOS -->
+<!-- HORÁRIOS -->
 <div class="card">
-  <h3>Horários</h3>
+  <h3>⏰ Escolha um horário</h3>
 
   <div id="horarios" class="horarios"></div>
 
-  <a id="btn" class="btn" href="#">📲 Agendar</a>
-</div>
-
-<!-- 🧴 PRODUTOS (AGORA NO FINAL CORRETO) -->
-<div class="card">
-  <h3>Produtos</h3>
-
-  <div class="produto">
-    <h3>Balm para Barba</h3>
-    <p>🔥 Hidrata, amacia, modela, alinha e perfuma sua barba.</p>
-    <strong>R$70</strong>
-  </div>
-
-  <div class="produto">
-    <h3>Shampoo + Condicionador</h3>
-    <p>💧 Limpa profundamente e cuida da pele da barba.</p>
-    <strong>R$45</strong>
-  </div>
-
+  <a id="btn" class="btn" href="#">📲 Solicitar agendamento</a>
 </div>
 
 </div>
@@ -260,10 +283,12 @@ function atualizar(){
     const mensagem =
 `Olá! Gostaria de agendar:
 
-💈 ${servico}
-💰 R$${preco}
-📅 ${dia}
-⏰ ${hora}`;
+💈 Serviço: ${servico}
+💰 Valor: R$${preco}
+📅 Dia: ${dia}
+⏰ Horário: ${hora}
+
+Aguardo confirmação 👍`;
 
     btn.href = `https://wa.me/5511999999999?text=${encodeURIComponent(mensagem)}`;
   }
