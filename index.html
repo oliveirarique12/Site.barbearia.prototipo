@@ -170,7 +170,7 @@ body {
     <div class="servico" onclick="selectServico(this,'Limpeza facial','30')">Limpeza<br>R$30</div>
 
     <div class="servico" onclick="selectServico(this,'Corte + Sobrancelhas','45')">Corte + Sobrancelhas<br>R$45</div>
-    <div class="servico" onclick="selectServico(this,'Corte + Sobrancelhas + Relaxamento','60')">Corte + Sombrancelhas + Relaxamento<br>R$60</div>
+    <div class="servico" onclick="selectServico(this,'Corte + Sobrancelhas + Relaxamento','60')">Combo Completo<br>R$60</div>
     <div class="servico" onclick="selectServico(this,'Corte + Barba','70')">Corte + Barba<br>R$70</div>
   </div>
 
@@ -226,15 +226,28 @@ body {
 
   <div id="horarios" class="horarios"></div>
 
-  <a id="btn" class="btn" href="#">📲 Solicitar agendamento</a>
+  <button id="btn" class="btn">📲 Solicitar agendamento</button>
 </div>
 
 </div>
 
-<script>
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-app.js";
+import { getFirestore, collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyAxApXN7L9FvLL2Sk-U6s-rdyB0u5zH6tI",
+  authDomain: "mario-barba.firebaseapp.com",
+  projectId: "mario-barba",
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
 
 let servico="", preco="", dia="", hora="";
-  let produtos = [];
+let produtos = [];
+let horariosOcupados = [];
 
 const horariosBase = [
 "09:00","09:30","10:00","10:30",
@@ -245,27 +258,37 @@ const horariosBase = [
 "19:00","19:30","20:00"
 ];
 
-function selectServico(el, nome, valor){
+window.selectServico = function(el, nome, valor){
   document.querySelectorAll('.servico').forEach(e=>e.classList.remove('active'));
   el.classList.add('active');
-
   servico = nome;
   preco = valor;
-
   document.getElementById("resumo").innerHTML = `${nome} - R$${valor}`;
-  atualizar();
 }
 
-  function addProduto(nome, valor) {
-    produtos.push({nome, valor});
-    atualizar();
+window.addProduto = function(nome, valor){
+  produtos.push({nome, valor});
 }
 
-function selectDia(el, nome){
+window.selectDia = async function(el, nome){
   document.querySelectorAll('.dia').forEach(e=>e.classList.remove('active'));
   el.classList.add('active');
-
   dia = nome;
+  await carregarHorarios();
+}
+
+async function carregarHorarios(){
+  horariosOcupados = [];
+
+  const querySnapshot = await getDocs(collection(db, "agendamentos"));
+
+  querySnapshot.forEach(doc => {
+    const data = doc.data();
+    if(data.dia === dia){
+      horariosOcupados.push(data.hora);
+    }
+  });
+
   gerarHorarios();
 }
 
@@ -277,7 +300,15 @@ function gerarHorarios(){
     let span = document.createElement("div");
     span.className="hora";
     span.innerText=h;
-    span.onclick=()=>selectHora(span,h);
+
+    if(horariosOcupados.includes(h)){
+      span.style.background = "#999";
+      span.style.cursor = "not-allowed";
+      span.innerText = h + " ❌";
+    } else {
+      span.onclick=()=>selectHora(span,h);
+    }
+
     div.appendChild(span);
   });
 }
@@ -285,16 +316,26 @@ function gerarHorarios(){
 function selectHora(el, h){
   document.querySelectorAll('.hora').forEach(e=>e.classList.remove('active'));
   el.classList.add('active');
-
   hora=h;
-  atualizar();
 }
 
-function atualizar(){
-  const btn = document.getElementById("btn");
+document.getElementById("btn").onclick = async () => {
+
+  if(!servico || !dia || !hora){
+    alert("Preencha tudo!");
+    return;
+  }
+
+  await addDoc(collection(db, "agendamentos"), {
+    servico,
+    preco,
+    dia,
+    hora,
+    produtos,
+    criadoEm: new Date()
+  });
 
   let listaProdutos = "";
-
   if(produtos.length > 0){
     listaProdutos = "\n🧴 Produtos:";
     produtos.forEach(p=>{
@@ -302,21 +343,20 @@ function atualizar(){
     });
   }
 
-  if(servico && dia && hora){
-    const mensagem =
+  const mensagem =
 `Olá! Gostaria de agendar:
 
 💈 Serviço: ${servico}
-💰 Valor: R$${preco}
-📅 Dia: ${dia}
-⏰ Horário: ${hora}
-${listaProdutos}
+💰 R$${preco}
+📅 ${dia}
+⏰ ${hora}
+${listaProdutos}`;
 
-Aguardo confirmação 👍`;
+  window.open(`https://wa.me/5511934895193?text=${encodeURIComponent(mensagem)}`);
 
-    btn.href = `https://wa.me/5511934895193?text=${encodeURIComponent(mensagem)}`;
-  }
-}
+  alert("Agendamento enviado!");
+
+};
 
 </script>
 
