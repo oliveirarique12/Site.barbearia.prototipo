@@ -184,15 +184,23 @@ body {
   <div class="produto">
     <img src="img/balm.png">
     <h3>Balm para Barba</h3>
-    <p>🔥 Hidrata, amacia e deixa sua barba alinhada e perfumada o dia inteiro.</p>
+    <p>🔥 Hidrata, amacia e deixa sua barba alinhada e perfumada.</p>
     <strong>R$70</strong>
+
+    <button class="btn" onclick="addProduto('Balm para Barba','70')">
+      ➕ Adicionar
+    </button>
   </div>
 
   <div class="produto">
-    <img src="img/kit.png">
-    <h3>Kit Shampoo + Condicionador</h3>
-    <p>💧 Limpeza profunda e cuidado completo para sua barba.</p>
+    <img src="img/shampoo.png">
+    <h3>Shampoo + Condicionador</h3>
+    <p>💧 Limpa profundamente e cuida da barba.</p>
     <strong>R$45</strong>
+
+    <button class="btn" onclick="addProduto('Shampoo + Condicionador','45')">
+      ➕ Adicionar
+    </button>
   </div>
 
 </div>
@@ -226,6 +234,7 @@ body {
 <script>
 
 let servico="", preco="", dia="", hora="";
+  let produtos = [];
 
 const horariosBase = [
 "09:00","09:30","10:00","10:30",
@@ -245,6 +254,11 @@ function selectServico(el, nome, valor){
 
   document.getElementById("resumo").innerHTML = `${nome} - R$${valor}`;
   atualizar();
+}
+
+  function addProduto(nome, valor) {
+    produtos.push({nome, valor});
+    atualizar();
 }
 
 function selectDia(el, nome){
@@ -279,6 +293,15 @@ function selectHora(el, h){
 function atualizar(){
   const btn = document.getElementById("btn");
 
+  let listaProdutos = "";
+
+  if(produtos.length > 0){
+    listaProdutos = "\n🧴 Produtos:";
+    produtos.forEach(p=>{
+      listaProdutos += `\n- ${p.nome} (R$${p.valor})`;
+    });
+  }
+
   if(servico && dia && hora){
     const mensagem =
 `Olá! Gostaria de agendar:
@@ -287,6 +310,7 @@ function atualizar(){
 💰 Valor: R$${preco}
 📅 Dia: ${dia}
 ⏰ Horário: ${hora}
+${listaProdutos}
 
 Aguardo confirmação 👍`;
 
