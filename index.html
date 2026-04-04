@@ -87,14 +87,15 @@ body {
 
 .btn {
   display: block;
-  margin-top: 15px;
-  padding: 15px;
+  margin-top: 10px;
+  padding: 12px;
   background: #000;
   color: #fff;
   text-align: center;
-  border-radius: 12px;
+  border-radius: 10px;
   text-decoration: none;
   font-weight: bold;
+  border: none;
 }
 
 /* PLANO */
@@ -105,26 +106,44 @@ body {
   padding: 20px;
 }
 
-/* PRODUTOS */
+/* PRODUTOS GRID */
+.produtos-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
 .produto {
   background: #111;
   color: #fff;
-  border-radius: 15px;
-  padding: 15px;
-  margin-top: 10px;
+  border-radius: 12px;
+  padding: 10px;
+  text-align: center;
 }
 
 .produto img {
   width: 100%;
-  border-radius: 10px;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 8px;
 }
 
 .produto h3 {
-  margin: 10px 0 5px;
+  font-size: 13px;
+  margin: 5px 0;
 }
 
-.produto p {
-  font-size: 14px;
+.produto strong {
+  font-size: 13px;
+}
+
+.produto .btn {
+  margin-top: 5px;
+  padding: 8px;
+  font-size: 12px;
+  border-radius: 8px;
+  background: #fff;
+  color: #000;
 }
 </style>
 </head>
@@ -140,22 +159,17 @@ body {
 <!-- PLANO -->
 <div class="card">
   <h3>💳 Plano Mensal</h3>
-
   <div class="plano-box">
     <h2>Plano VIP</h2>
     <p><strong>🔥 Esteja sempre alinhado sem se preocupar!</strong></p>
-
     <ul>
       <li>✔️ Corte ilimitado durante o mês</li>
       <li>✔️ Corte quantas vezes quiser</li>
       <li>✔️ Economia garantida</li>
     </ul>
-
     <h2 style="text-align:center;">R$80/mês</h2>
-
-    <a href="https://wa.me/5511934895193?text=Quero%20assinar%20o%20plano%20mensal"
-       class="btn">
-       💬 Assinar plano
+    <a href="https://wa.me/5511934895193?text=Quero%20assinar%20o%20plano%20mensal" class="btn">
+      💬 Assinar plano
     </a>
   </div>
 </div>
@@ -168,9 +182,8 @@ body {
     <div class="servico" onclick="selectServico(this,'Corte','40')">Corte<br>R$40</div>
     <div class="servico" onclick="selectServico(this,'Sobrancelhas','15')">Sobrancelhas<br>R$15</div>
     <div class="servico" onclick="selectServico(this,'Limpeza facial','30')">Limpeza<br>R$30</div>
-
     <div class="servico" onclick="selectServico(this,'Corte + Sobrancelhas','45')">Corte + Sobrancelhas<br>R$45</div>
-    <div class="servico" onclick="selectServico(this,'Corte + Sobrancelhas + Relaxamento','60')">Corte + Sobrancelhas + Relaxamento<br>R$60</div>
+    <div class="servico" onclick="selectServico(this,'Corte + Sobrancelhas + Relaxamento','60')">Combo<br>R$60</div>
     <div class="servico" onclick="selectServico(this,'Corte + Barba','70')">Corte + Barba<br>R$70</div>
   </div>
 
@@ -181,34 +194,56 @@ body {
 <div class="card">
   <h3>🧴 Produtos</h3>
 
-  <div class="produto">
-    <img src="img/balm.png">
-    <h3>Balm para Barba</h3>
-    <p>🔥 Hidrata, amacia e deixa sua barba alinhada e perfumada.</p>
-    <strong>R$70</strong>
+  <div class="produtos-grid">
 
-    <button class="btn" onclick="addProduto('Balm para Barba','70')">
-      ➕ Adicionar
-    </button>
+    <div class="produto">
+      <img src="img/balm.png">
+      <h3>Balm</h3>
+      <strong>R$70</strong>
+      <button class="btn" onclick="addProduto('Balm para Barba','70')">+</button>
+    </div>
+
+    <div class="produto">
+      <img src="img/kit.png">
+      <h3>Kit Barba</h3>
+      <strong>R$45</strong>
+      <button class="btn" onclick="addProduto('Shampoo + Condicionador','45')">+</button>
+    </div>
+
+    <div class="produto">
+      <img src="img/pasta1.png">
+      <h3>Pasta G10</h3>
+      <strong>R$20</strong>
+      <button class="btn" onclick="addProduto('Pasta Modeladora G10','20')">+</button>
+    </div>
+
+    <div class="produto">
+      <img src="img/pasta2.png">
+      <h3>Pasta Incolor</h3>
+      <strong>R$20</strong>
+      <button class="btn" onclick="addProduto('Pasta Modeladora Incolor','20')">+</button>
+    </div>
+
+    <div class="produto">
+      <img src="img/fox.png">
+      <h3>Fox Men</h3>
+      <strong>R$35</strong>
+      <button class="btn" onclick="addProduto('Fox For Men','35')">+</button>
+    </div>
+
+    <div class="produto">
+      <img src="img/blend.png">
+      <h3>Blend</h3>
+      <strong>R$40</strong>
+      <button class="btn" onclick="addProduto('Blend Tônico','40')">+</button>
+    </div>
+
   </div>
-
-  <div class="produto">
-    <img src="img/kit.png">
-    <h3>Shampoo + Condicionador</h3>
-    <p>💧 Limpa profundamente e cuida da barba.</p>
-    <strong>R$45</strong>
-
-    <button class="btn" onclick="addProduto('Shampoo + Condicionador','45')">
-      ➕ Adicionar
-    </button>
-  </div>
-
 </div>
 
 <!-- DIA -->
 <div class="card">
   <h3>📅 Escolha o dia</h3>
-
   <div class="dias">
     <div class="dia" onclick="selectDia(this,'Domingo')">Dom</div>
     <div class="dia" onclick="selectDia(this,'Segunda')">Seg</div>
@@ -223,9 +258,7 @@ body {
 <!-- HORÁRIOS -->
 <div class="card">
   <h3>⏰ Escolha um horário</h3>
-
   <div id="horarios" class="horarios"></div>
-
   <button id="btn" class="btn">📲 Solicitar agendamento</button>
 </div>
 
@@ -237,9 +270,9 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/12.11.0/fireba
 import { getFirestore, collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyAxApXN7L9FvLL2Sk-U6s-rdyB0u5zH6tI",
-  authDomain: "mario-barba.firebaseapp.com",
-  projectId: "mario-barba",
+  apiKey: "SUA_API",
+  authDomain: "SEU_DOMINIO",
+  projectId: "SEU_ID",
 };
 
 const app = initializeApp(firebaseConfig);
@@ -355,7 +388,6 @@ ${listaProdutos}`;
   window.open(`https://wa.me/5511934895193?text=${encodeURIComponent(mensagem)}`);
 
   alert("Agendamento enviado!");
-
 };
 
 </script>
