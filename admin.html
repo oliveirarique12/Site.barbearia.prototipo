@@ -3,7 +3,6 @@
 <head>
 <meta charset="UTF-8">
 <title>Painel Mario Barba</title>
-<!--Corpo -->
 <style>
 body {
   font-family: Arial;
@@ -11,18 +10,15 @@ body {
   color: #fff;
   padding: 20px;
 }
-
 h1 {
   text-align: center;
 }
-
 .card {
   background: #222;
   padding: 15px;
   border-radius: 10px;
   margin: 10px 0;
 }
-
 button {
   background: red;
   color: #fff;
@@ -37,7 +33,6 @@ button {
 <body>
 
 <h1>📅 Agenda - Mario Barba</h1>
-
 <div id="lista"></div>
 
 <!--  PROTEÇÃO COM SENHA -->
@@ -64,9 +59,8 @@ if(!acesso){
 
 <!-- FIREBASE -->
 <script type="module">
-
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-app.js";
-import { getFirestore, collection, getDocs, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
+import { getFirestore, collection, getDocs, deleteDoc, doc, setDoc } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyAxApXN7L9FvLL2Sk-U6s-rdyB0u5zH6tI",
@@ -77,12 +71,33 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
+// Função para arquivar agendamentos antigos
+async function arquivarAgendamentos() {
+  const hoje = new Date();
+  const dataHoje = hoje.toISOString().split('T')[0]; // yyyy-mm-dd
+
+  const snapshot = await getDocs(collection(db, "agendamentos"));
+  snapshot.forEach(async (docSnap) => {
+    const data = docSnap.data().dia; // pegando o campo "dia"
+    const id = docSnap.id;
+    
+    if(data < dataHoje){
+      // Mover para histórico
+      await setDoc(doc(db, "agendamentos_concluidos", id), docSnap.data());
+      // Remover da coleção ativa
+      await deleteDoc(doc(db, "agendamentos", id));
+      console.log(`Agendamento do dia ${data} arquivado`);
+    }
+  });
+}
+
+// Função para carregar agenda ativa
 async function carregar(){
+  await arquivarAgendamentos(); // roda arquivamento antes de mostrar
   const div = document.getElementById("lista");
   div.innerHTML = "";
 
   const querySnapshot = await getDocs(collection(db, "agendamentos"));
-
   querySnapshot.forEach((d) => {
     const data = d.data();
 
@@ -100,13 +115,14 @@ async function carregar(){
   });
 }
 
+// Função para remover manualmente
 window.remover = async (id)=>{
   await deleteDoc(doc(db,"agendamentos",id));
   carregar();
 };
 
+// Inicializa painel
 carregar();
-
 </script>
 
 </body>
