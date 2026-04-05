@@ -10,9 +10,7 @@ body {
   color: #fff;
   padding: 20px;
 }
-h1 {
-  text-align: center;
-}
+h1 { text-align: center; }
 .card {
   background: #222;
   padding: 15px;
@@ -32,35 +30,28 @@ button {
 
 <body>
 
-<h1>📅 Agenda - Mario Barba</h1>
-<div id="lista"></div>
+<h1>📅 Painel - Mario Barba</h1>
+<div id="loginDiv">
+  <p>Login necessário</p>
+  <input type="email" id="email" placeholder="Email">
+  <input type="password" id="senha" placeholder="Senha">
+  <button id="btnLogin">Entrar</button>
+</div>
 
-<!--  PROTEÇÃO COM SENHA -->
-<script>
-const senhaCorreta = "mariobarba2026";
-let acesso = false;
+<div id="painel" style="display:none;">
+  <h2>Agendamentos Ativos</h2>
+  <div id="lista"></div>
 
-for(let i=0; i<3; i++){
-  let tentativa = prompt("Digite a senha:");
+  <h2>Histórico de Agendamentos</h2>
+  <div id="historico"></div>
 
-  if(tentativa === senhaCorreta){
-    acesso = true;
-    break;
-  } else {
-    alert("Senha incorreta!");
-  }
-}
+  <button id="btnSair">Sair</button>
+</div>
 
-if(!acesso){
-  alert("Acesso bloqueado!");
-  window.location.href = "/";
-}
-</script>
-
-<!-- FIREBASE -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-app.js";
-import { getFirestore, collection, getDocs, deleteDoc, doc, setDoc } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
+import { getFirestore, collection, getDocs, setDoc, doc, deleteDoc } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
+import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-auth.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyAxApXN7L9FvLL2Sk-U6s-rdyB0u5zH6tI",
@@ -70,59 +61,102 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
+const auth = getAuth(app);
 
-// Função para arquivar agendamentos antigos
-async function arquivarAgendamentos() {
-  const hoje = new Date();
-  const dataHoje = hoje.toISOString().split('T')[0]; // yyyy-mm-dd
+const loginDiv = document.getElementById("loginDiv");
+const painel = document.getElementById("painel");
 
+// Login do mario
+document.getElementById("btnLogin").addEventListener("click", async ()=>{
+  const email = document.getElementById("email").value;
+  const senha = document.getElementById("senha").value;
+  try{
+    await signInWithEmailAndPassword(auth, email, senha);
+  } catch(e){
+    alert("Email ou senha incorreto!");
+  }
+});
+
+// Sair
+document.getElementById("btnSair").addEventListener("click", async ()=>{
+  await signOut(auth);
+});
+
+// Verificar login
+onAuthStateChanged(auth, (user)=>{
+  if(user){
+    loginDiv.style.display = "none";
+    painel.style.display = "block";
+    carregarPainel();
+  } else {
+    loginDiv.style.display = "block";
+    painel.style.display = "none";
+  }
+});
+
+// Funçôes do painel
+async function carregarPainel(){
+  await arquivarAgendamentos();
+  carregarAgendamentos();
+  carregarHistorico();
+}
+
+// Arquivar agendamentos antigos
+async function arquivarAgendamentos(){
+  const hoje = new Date().toISOString().split('T')[0];
   const snapshot = await getDocs(collection(db, "agendamentos"));
-  snapshot.forEach(async (docSnap) => {
-    const data = docSnap.data().dia; // pegando o campo "dia"
+  snapshot.forEach(async (docSnap)=>{
+    const data = docSnap.data().dia;
     const id = docSnap.id;
-    
-    if(data < dataHoje){
-      // Mover para histórico
+    if(data < hoje){
       await setDoc(doc(db, "agendamentos_concluidos", id), docSnap.data());
-      // Remover da coleção ativa
       await deleteDoc(doc(db, "agendamentos", id));
-      console.log(`Agendamento do dia ${data} arquivado`);
     }
   });
 }
 
-// Função para carregar agenda ativa
-async function carregar(){
-  await arquivarAgendamentos(); // roda arquivamento antes de mostrar
+// Carregar agendamentos ativos
+async function carregarAgendamentos(){
   const div = document.getElementById("lista");
   div.innerHTML = "";
-
   const querySnapshot = await getDocs(collection(db, "agendamentos"));
-  querySnapshot.forEach((d) => {
+  querySnapshot.forEach((d)=>{
     const data = d.data();
-
     const card = document.createElement("div");
     card.className="card";
-
     card.innerHTML = `
       <p><strong>💈 ${data.servico}</strong></p>
       <p>📅 ${data.dia}</p>
       <p>⏰ ${data.hora}</p>
-      <button onclick="remover('${d.id}')">Cancelar</button>
+      <button onclick="cancelarAgendamento('${d.id}')">Cancelar</button>
     `;
-
     div.appendChild(card);
   });
 }
 
-// Função para remover manualmente
-window.remover = async (id)=>{
-  await deleteDoc(doc(db,"agendamentos",id));
-  carregar();
-};
+// Carregar histórico
+async function carregarHistorico(){
+  const div = document.getElementById("historico");
+  div.innerHTML = "";
+  const snapshot = await getDocs(collection(db, "agendamentos_concluidos"));
+  snapshot.forEach((d)=>{
+    const data = d.data();
+    const card = document.createElement("div");
+    card.className="card";
+    card.innerHTML = `
+      <p><strong>💈 ${data.servico}</strong></p>
+      <p>📅 ${data.dia}</p>
+      <p>⏰ ${data.hora}</p>
+    `;
+    div.appendChild(card);
+  });
+}
 
-// Inicializa painel
-carregar();
+// Cancelar manualmente
+window.cancelarAgendamento = async (id)=>{
+  await deleteDoc(doc(db, "agendamentos", id));
+  carregarPainel();
+};
 </script>
 
 </body>
