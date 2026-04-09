@@ -399,9 +399,9 @@ async function carregarHorarios(){
   const querySnapshot = await getDocs(collection(db, "agendamentos"));
 
   querySnapshot.forEach(doc => {
-    const data = doc.data();
-    if(data.data === dataSelecionada){
-      horariosOcupados.push(data.hora);
+    const agendamento = doc.data();
+    if(agendamento.data === dataSelecionada){
+      horariosOcupados.push(agendamento.hora);
     }
   });
 
@@ -436,6 +436,8 @@ function selectHora(el, h){
 }
 
 document.getElementById("btn").onclick = async () => {
+
+  dataSelecionada = document.getElementById("data").value;
 
  if(!servico || !dataSelecionada || !hora){
     alert("Preencha tudo!");
