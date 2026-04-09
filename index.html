@@ -328,17 +328,11 @@ background:#f5f5f5; /*corbranca*/
 
 <!-- DIA -->
 <div class="card">
-  <h3>📅 Escolha o dia</h3>
+ <div class="card">
+  <h3>📅 Escolha a data</h3>
 
-  <div class="dias">
-    <div class="dia" onclick="selectDia(this,'Domingo')">Dom</div>
-    <div class="dia" onclick="selectDia(this,'Segunda')">Seg</div>
-    <div class="dia" onclick="selectDia(this,'Terça')">Ter</div>
-    <div class="dia" onclick="selectDia(this,'Quarta')">Qua</div>
-    <div class="dia" onclick="selectDia(this,'Quinta')">Qui</div>
-    <div class="dia" onclick="selectDia(this,'Sexta')">Sex</div>
-    <div class="dia" onclick="selectDia(this,'Sábado')">Sáb</div>
-  </div>
+  <input type="date" id="data" class="btn" style="background:#fff; color:#000;">
+</div>
 </div>
 
 <!-- HORÁRIOS -->
@@ -363,10 +357,13 @@ const firebaseConfig = {
   projectId: "mario-barba",
 };
 
+  const hoje = new Date().toISOString().split("T")[0];
+document.getElementById("data").min = hoje;
+
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-let servico="", preco="", dia="", hora="";
+let servico="", preco="", dataSelecionada="", hora="";
 let produtos = [];
 let horariosOcupados = [];
 
@@ -391,12 +388,10 @@ window.addProduto = function(nome, valor){
   produtos.push({nome, valor});
 }
 
-window.selectDia = async function(el, nome){
-  document.querySelectorAll('.dia').forEach(e=>e.classList.remove('active'));
-  el.classList.add('active');
-  dia = nome;
+document.getElementById("data").addEventListener("change", async (e) => {
+  dataSelecionada = e.target.value;
   await carregarHorarios();
-}
+});
 
 async function carregarHorarios(){
   horariosOcupados = [];
@@ -405,7 +400,7 @@ async function carregarHorarios(){
 
   querySnapshot.forEach(doc => {
     const data = doc.data();
-    if(data.dia === dia){
+    if(data.data === dataSelecionada){
       horariosOcupados.push(data.hora);
     }
   });
@@ -450,7 +445,7 @@ document.getElementById("btn").onclick = async () => {
   await addDoc(collection(db, "agendamentos"), {
     servico,
     preco,
-    dia,
+    data: dataSelecionada,
     hora,
     produtos,
     criadoEm: new Date()
@@ -469,7 +464,7 @@ document.getElementById("btn").onclick = async () => {
 
 💈 Serviço: ${servico}
 💰 R$${preco}
-📅 ${dia}
+📅 ${dataSelecionada}
 ⏰ ${hora}
 ${listaProdutos}`;
 
