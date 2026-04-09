@@ -357,13 +357,12 @@ const firebaseConfig = {
   projectId: "mario-barba",
 };
 
-  const hoje = new Date().toISOString().split("T")[0];
+const hoje = new Date().toISOString().split("T")[0];
 
 const inputData = document.getElementById("data");
 inputData.min = hoje;
 inputData.value = hoje;
 
-//  ESSENCIAL
 let dataSelecionada = hoje;
 
 const app = initializeApp(firebaseConfig);
@@ -382,6 +381,7 @@ const horariosBase = [
 "19:00","19:30","20:00"
 ];
 
+// Tornando as funções globais para o HTML conseguir enxergá-las
 window.selectServico = function(el, nome, valor){
   document.querySelectorAll('.servico').forEach(e=>e.classList.remove('active'));
   el.classList.add('active');
@@ -392,10 +392,18 @@ window.selectServico = function(el, nome, valor){
 
 window.addProduto = function(nome, valor){
   produtos.push({nome, valor});
+  alert(`✅ ${nome} adicionado ao seu pacote!`); // Pequeno feedback visual pro cliente
+}
+
+window.selectHora = function(el, h){
+  document.querySelectorAll('.hora').forEach(e=>e.classList.remove('active'));
+  el.classList.add('active');
+  hora = h;
 }
 
 document.getElementById("data").addEventListener("change", async (e) => {
   dataSelecionada = e.target.value;
+  hora = ""; // Reseta a hora selecionada ao mudar de dia
   await carregarHorarios();
 });
 
@@ -415,19 +423,18 @@ async function carregarHorarios(){
 }
 
 function gerarHorarios(){
-
   const agora = new Date();
-  const hoje = agora.toISOString().split("T")[0];
+  const hojeStr = agora.toISOString().split("T")[0];
 
   const div = document.getElementById("horarios");
   div.innerHTML = "";
 
   horariosBase.forEach(h => {
-
-    // FILTRO DE HORÁRIOS PASSADOS, teste*
-    if(dataSelecionada === hoje){
+    // Filtro de horários passados para o dia de hoje
+    if(dataSelecionada === hojeStr){
       const horaAtual = agora.getHours();
-
+      
+      // Remove os horários que já passaram
       if(parseInt(h.split(":")[0]) <= horaAtual){
         return;
       }
@@ -442,56 +449,22 @@ function gerarHorarios(){
       span.style.cursor = "not-allowed";
       span.innerText = h + " ❌";
     } else {
-      span.onclick = () => selectHora(span, h);
+      span.onclick = () => window.selectHora(span, h);
     }
 
     div.appendChild(span);
   });
-}
- horariosBase.forEach(h=>{
-
-  if(dataSelecionada === hoje){
-    const horaAtual = agora.getHours();
-
-    if(parseInt(h.split(":")[0]) <= horaAtual){
-      return;
-    }
-  }
-
-  let span = document.createElement("div");
-  span.className="hora";
-  span.innerText = h;
-
-  if(horariosOcupados.includes(h)){
-    span.style.background = "#999";
-    span.style.cursor = "not-allowed";
-    span.innerText = h + " ❌";
-  } else {
-    span.onclick = () => selectHora(span, h);
-  }
-
-  div.appendChild(span);
-});
-
-    div.appendChild(span);
-  });
-}
-
-function selectHora(el, h){
-  document.querySelectorAll('.hora').forEach(e=>e.classList.remove('active'));
-  el.classList.add('active');
-  hora=h;
 }
 
 document.getElementById("btn").onclick = async () => {
-
   dataSelecionada = document.getElementById("data").value;
 
- if(!servico || !dataSelecionada || !hora){
-    alert("Preencha tudo!");
+  if(!servico || !dataSelecionada || !hora){
+    alert("⚠️ Por favor, selecione um serviço e um horário antes de agendar!");
     return;
   }
 
+  // Tenta salvar no Firebase
   await addDoc(collection(db, "agendamentos"), {
     servico,
     preco,
@@ -501,30 +474,34 @@ document.getElementById("btn").onclick = async () => {
     criadoEm: new Date()
   });
 
+  // Prepara a mensagem do WhatsApp
   let listaProdutos = "";
   if(produtos.length > 0){
-    listaProdutos = "\n🧴 Produtos:";
+    listaProdutos = "\n🧴 Produtos adicionais:";
     produtos.forEach(p=>{
       listaProdutos += `\n- ${p.nome} (R$${p.valor})`;
     });
   }
 
-  const mensagem =
+  const mensagem = 
 `Olá! Gostaria de agendar:
 
 💈 Serviço: ${servico}
-💰 R$${preco}
-📅 ${dataSelecionada}
-⏰ ${hora}
+💰 Valor do serviço: R$${preco}
+📅 Data: ${dataSelecionada}
+⏰ Horário: ${hora}
 ${listaProdutos}`;
 
   window.open(`https://wa.me/5511934895193?text=${encodeURIComponent(mensagem)}`);
 
-  alert("Agendamento enviado!");
-
+  alert("Agendamento concluído com sucesso!");
 };
 
+// CRUCIAL: Chama a função logo que a página carrega para mostrar os horários de hoje!
+carregarHorarios();
+
 </script>
+
 
 </body>
 </html>
