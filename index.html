@@ -417,28 +417,37 @@ async function carregarHorarios(){
 function gerarHorarios(){
 
   const agora = new Date();
-const hoje = agora.toISOString().split("T")[0];
+  const hoje = agora.toISOString().split("T")[0];
 
-  
   const div = document.getElementById("horarios");
-  div.innerHTML="";
+  div.innerHTML = "";
 
-  horariosBase.forEach(h=>{
-function gerarHorarios(){
+  horariosBase.forEach(h => {
 
-  const agora = new Date();
-const hoje = agora.toISOString().split("T")[0];
+    // FILTRO DE HORÁRIOS PASSADOS, teste*
+    if(dataSelecionada === hoje){
+      const horaAtual = agora.getHours();
 
-  
-  const div = document.getElementById("horarios");
-  div.innerHTML="";
-
-  if(dataSelecionada === hoje){
-    const horaAtual = agora.getHours();
-
-    if(parseInt(h.split(":")[0]) <= horaAtual){
-      return;
+      if(parseInt(h.split(":")[0]) <= horaAtual){
+        return;
+      }
     }
+
+    let span = document.createElement("div");
+    span.className = "hora";
+    span.innerText = h;
+
+    if(horariosOcupados.includes(h)){
+      span.style.background = "#999";
+      span.style.cursor = "not-allowed";
+      span.innerText = h + " ❌";
+    } else {
+      span.onclick = () => selectHora(span, h);
+    }
+
+    div.appendChild(span);
+  });
+}
  horariosBase.forEach(h=>{
 
   if(dataSelecionada === hoje){
