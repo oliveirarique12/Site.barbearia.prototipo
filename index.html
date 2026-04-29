@@ -368,7 +368,7 @@ let dataSelecionada = hoje;
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-let servico="", preco="", hora="";
+let servicos = [];
 let produtos = [];
 let horariosOcupados = [];
 
@@ -384,11 +384,41 @@ const horariosBase = [
 
 // Tornando as funções globais para o HTML conseguir enxergá-las
 window.selectServico = function(el, nome, valor){
-  document.querySelectorAll('.servico').forEach(e=>e.classList.remove('active'));
-  el.classList.add('active');
-  servico = nome;
-  preco = valor;
-  document.getElementById("resumo").innerHTML = `${nome} - R$${valor}`;
+
+  const index = servicos.findIndex(s => s.nome === nome);
+
+  if(index > -1){
+    // REMOVE se já estiver selecionado
+    servicos.splice(index,1);
+    el.classList.remove('active');
+  } else {
+    // ADICIONA
+    servicos.push({nome, valor});
+    el.classList.add('active');
+  }
+
+  atualizarResumo();
+}
+
+
+  function atualizarResumo(){
+  if(servicos.length === 0){
+    document.getElementById("resumo").innerHTML = "Selecione um serviço";
+    return;
+  }
+
+  let total = 0;
+  let texto = "";
+
+  servicos.forEach(s => {
+    texto += `${s.nome} <br>`;
+    total += Number(s.valor);
+  });
+
+  document.getElementById("resumo").innerHTML = `
+    ${texto}
+    <strong>Total: R$${total}</strong>
+  `;
 }
 
 window.addProduto = function(nome, valor){
@@ -460,7 +490,7 @@ function gerarHorarios(){
 document.getElementById("btn").onclick = async () => {
   dataSelecionada = document.getElementById("data").value;
 
-  if(!servico || !dataSelecionada || !hora){
+ if(servicos.length === 0 || !dataSelecionada || !hora){
     alert("⚠️ Por favor, selecione um serviço e um horário antes de agendar!");
     return;
   }
@@ -487,8 +517,13 @@ document.getElementById("btn").onclick = async () => {
   const mensagem = 
 `Olá! Gostaria de agendar:
 
-💈 Serviço: ${servico}
-💰 Valor do serviço: R$${preco}
+let listaServicos = "";
+let total = 0;
+
+servicos.forEach(s => {
+  listaServicos += `\n- ${s.nome} (R$${s.valor})`;
+  total += Number(s.valor);
+});
 📅 Data: ${dataSelecionada}
 ⏰ Horário: ${hora}
 ${listaProdutos}`;
