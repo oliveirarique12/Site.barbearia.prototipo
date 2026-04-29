@@ -369,6 +369,7 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
 let servicos = [];
+  let hora = "";
 let produtos = [];
 let horariosOcupados = [];
 
@@ -490,22 +491,28 @@ function gerarHorarios(){
 document.getElementById("btn").onclick = async () => {
   dataSelecionada = document.getElementById("data").value;
 
- if(servicos.length === 0 || !dataSelecionada || !hora){
+  if(servicos.length === 0 || !dataSelecionada || !hora){
     alert("⚠️ Por favor, selecione um serviço e um horário antes de agendar!");
     return;
   }
 
-  // Tenta salvar no Firebase
+  // 🔥 CALCULA TOTAL UMA VEZ SÓ
+  let total = 0;
+  servicos.forEach(s => {
+    total += Number(s.valor);
+  });
+
+  // 🔥 SALVA
   await addDoc(collection(db, "agendamentos"), {
-    servico,
-    preco,
+    servicos,
+    total,
     data: dataSelecionada,
     hora,
     produtos,
     criadoEm: new Date()
   });
 
-  // Prepara a mensagem do WhatsApp
+  // 🔥 LISTA DE PRODUTOS
   let listaProdutos = "";
   if(produtos.length > 0){
     listaProdutos = "\n🧴 Produtos adicionais:";
@@ -514,16 +521,19 @@ document.getElementById("btn").onclick = async () => {
     });
   }
 
+  // 🔥 LISTA DE SERVIÇOS
+  let listaServicos = "";
+  servicos.forEach(s => {
+    listaServicos += `\n- ${s.nome} (R$${s.valor})`;
+  });
+
+  // 🔥 MENSAGEM FINAL (AGORA FUNCIONA)
   const mensagem = 
 `Olá! Gostaria de agendar:
 
-let listaServicos = "";
-let total = 0;
+💈 Serviços:${listaServicos}
 
-servicos.forEach(s => {
-  listaServicos += `\n- ${s.nome} (R$${s.valor})`;
-  total += Number(s.valor);
-});
+💰 Total: R$${total}
 📅 Data: ${dataSelecionada}
 ⏰ Horário: ${hora}
 ${listaProdutos}`;
@@ -532,12 +542,3 @@ ${listaProdutos}`;
 
   alert("Agendamento concluído com sucesso!");
 };
-
-//função logo que a página carrega para mostrar os horários de hoje
-carregarHorarios();
-
-</script>
-
-
-</body>
-</html>
