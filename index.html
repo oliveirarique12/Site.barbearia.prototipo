@@ -538,7 +538,7 @@ document.getElementById("btn").onclick = async () => {
 ⏰ Horário: ${hora}
 ${listaProdutos}`;
 
-  window.open(`https://wa.me/5511934895193?text=${encodeURIComponent(mensagem)}`);
+  window.location.href = `https://wa.me/5511934895193?text=${encodeURIComponent(mensagem)}`;
 
   alert("Agendamento concluído com sucesso!");
 };
