@@ -120,15 +120,25 @@ async function carregarAgendamentos(){
   const div = document.getElementById("lista");
   div.innerHTML = "";
   const querySnapshot = await getDocs(collection(db, "agendamentos"));
+  console.log(querySnapshot.docs.map(doc => doc.data()));
+  
   querySnapshot.forEach((d)=>{
     const data = d.data();
     const card = document.createElement("div");
     card.className="card";
-    card.innerHTML = `
-  <p><strong>💈 ${data.servicos.map(s => s.nome).join(", ")}</strong></p>
-  <p>📅 ${data.data}</p>
+   card.innerHTML = `
+  <p><strong>💈 ${
+    data.servicos
+      ? data.servicos.map(s => s.nome).join(", ")
+      : data.servico || "Serviço"
+  }</strong></p>
+
+  <p>📅 ${data.data || data.dia}</p>
   <p>⏰ ${data.hora}</p>
-  <button onclick="cancelarAgendamento('${d.id}')">Cancelar</button>
+
+  <button onclick="cancelarAgendamento('${d.id}')">
+    Cancelar
+  </button>
 `;
     div.appendChild(card);
   });
@@ -143,9 +153,14 @@ async function carregarHistorico(){
     const data = d.data();
     const card = document.createElement("div");
     card.className="card";
-    ccard.innerHTML = `
-  <p><strong>💈 ${data.servicos.map(s => s.nome).join(", ")}</strong></p>
-  <p>📅 ${data.data}</p>
+   card.innerHTML = `
+  <p><strong>💈 ${
+    data.servicos
+      ? data.servicos.map(s => s.nome).join(", ")
+      : data.servico || "Serviço"
+  }</strong></p>
+
+  <p>📅 ${data.data || data.dia}</p>
   <p>⏰ ${data.hora}</p>
 `;
     div.appendChild(card);
