@@ -106,7 +106,7 @@ async function arquivarAgendamentos(){
   const hoje = new Date().toISOString().split('T')[0];
   const snapshot = await getDocs(collection(db, "agendamentos"));
   snapshot.forEach(async (docSnap)=>{
-    const data = docSnap.data().dia;
+    const data = docSnap.data().data;
     const id = docSnap.id;
     if(data < hoje){
       await setDoc(doc(db, "agendamentos_concluidos", id), docSnap.data());
@@ -125,11 +125,11 @@ async function carregarAgendamentos(){
     const card = document.createElement("div");
     card.className="card";
     card.innerHTML = `
-      <p><strong>💈 ${data.servico}</strong></p>
-      <p>📅 ${data.dia}</p>
-      <p>⏰ ${data.hora}</p>
-      <button onclick="cancelarAgendamento('${d.id}')">Cancelar</button>
-    `;
+  <p><strong>💈 ${data.servicos.map(s => s.nome).join(", ")}</strong></p>
+  <p>📅 ${data.data}</p>
+  <p>⏰ ${data.hora}</p>
+  <button onclick="cancelarAgendamento('${d.id}')">Cancelar</button>
+`;
     div.appendChild(card);
   });
 }
@@ -143,11 +143,11 @@ async function carregarHistorico(){
     const data = d.data();
     const card = document.createElement("div");
     card.className="card";
-    card.innerHTML = `
-      <p><strong>💈 ${data.servico}</strong></p>
-      <p>📅 ${data.dia}</p>
-      <p>⏰ ${data.hora}</p>
-    `;
+    ccard.innerHTML = `
+  <p><strong>💈 ${data.servicos.map(s => s.nome).join(", ")}</strong></p>
+  <p>📅 ${data.data}</p>
+  <p>⏰ ${data.hora}</p>
+`;
     div.appendChild(card);
   });
 }
