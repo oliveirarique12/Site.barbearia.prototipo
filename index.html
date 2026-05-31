@@ -356,13 +356,16 @@ const firebaseConfig = {
   projectId: "mario-barba",
 };
 
-const hoje = new Date().toISOString().split("T")[0];
+const amanha = new Date();
+amanha.setDate(amanha.getDate() + 1);
+
+const amanhaStr = amanha.toISOString().split("T")[0];
 
 const inputData = document.getElementById("data");
-inputData.min = hoje;
-inputData.value = hoje;
+inputData.min = amanhaStr;
+inputData.value = amanhaStr;
 
-let dataSelecionada = hoje;
+let dataSelecionada = amanhaStr;
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
