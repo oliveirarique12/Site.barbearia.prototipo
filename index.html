@@ -469,7 +469,7 @@ function gerarHorarios(){
   horariosBase.forEach(h => {
 
     // Domingo: mostrar somente até 14h
-    if (diaSemana === 0 && parseInt(h.split(":")[0]) > 14) {
+    if (diaSemana === 0 && parseInt(h.split(":")[0]) > 13) {
       return;
     }
 
