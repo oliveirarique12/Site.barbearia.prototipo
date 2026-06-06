@@ -459,21 +459,18 @@ async function carregarHorarios(){
 }
 
 function gerarHorarios(){
-  const agora = new Date();
-  const hojeStr = agora.toISOString().split("T")[0];
-
   const div = document.getElementById("horarios");
   div.innerHTML = "";
 
+  // Descobre o dia da semana da data selecionada
+  const dataObj = new Date(dataSelecionada + "T00:00:00");
+  const diaSemana = dataObj.getDay(); // 0 = Domingo
+
   horariosBase.forEach(h => {
-    // Filtro de horários passados para o dia de hoje
-    if(dataSelecionada === hojeStr){
-      const horaAtual = agora.getHours();
-      
-      // Remove os horários que já passaram
-      if(parseInt(h.split(":")[0]) <= horaAtual){
-        return;
-      }
+
+    // Domingo: mostrar somente até 14h
+    if (diaSemana === 0 && parseInt(h.split(":")[0]) > 14) {
+      return;
     }
 
     let span = document.createElement("div");
